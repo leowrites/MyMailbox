@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useImmer } from 'use-immer'
-import logo from './logo.svg';
+import React from 'react'
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from 'react-bootstrap/Container'
+import ShowInfo from './components/ShowInfo';
 
-function App() {
-  // const [apiResponse, updateApiResponse] = useImmer({
-  //   apiResponse: ''
-  // })
-  const [apiResponse, setApiResponse] = useState('')
-  useEffect(() => {
-    fetch('http://localhost:8000/testAPI')
-      .then(res => res.text())
-      .then(res => setApiResponse(res))
-  })
+export default function App() {
   return (
-    <div className='App'>
-      <p className='App-intro'>{apiResponse}</p>
-    </div>
+    <Container className='vh-100'>
+      <ShowInfo />
+    </Container>
   )
 }
-
-export default App;
