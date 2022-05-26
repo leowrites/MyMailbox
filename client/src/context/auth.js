@@ -5,15 +5,18 @@ const AuthContext = React.createContext(null)
 
 const AuthProvider = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = React.useState(false)
-  const signInApp = (callback) => {
+  const [username, setUsername] = React.useState(null)
+  const signInApp = (username, callback) => {
+    setUsername(username)
     setIsSignedIn(true)
     callback()
   }
   const signOutApp = (callback) => {
     setIsSignedIn(false)
+    setUsername(null)
     callback()
   }
-  return <AuthContext.Provider value={{ isSignedIn, signInApp, signOutApp }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ isSignedIn, username, signInApp, signOutApp }}>{children}</AuthContext.Provider>
 }
 
 const useAuth = () => {
