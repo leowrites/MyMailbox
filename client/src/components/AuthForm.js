@@ -2,40 +2,58 @@ import React, { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { Google } from 'react-bootstrap-icons'
+import { useAuth } from '../context/auth'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-const simulateRequest = () => {
-    return new Promise((resolve) => setTimeout(resolve, 1000))
-}
+
+// const { google } = require('googleapis')
+// const path = require('path')
+
+// require('dotenv').config({
+//     path: path.join(path.resolve(), '.env')
+// })
+// console.log(path.join(path.resolve(), '.env'))
+
+const simulateAuthentication = new Promise((res, rej) => {
+    setTimeout(() => {
+        res('success')
+    }, 2000)
+})
 
 export default function AuthForm(props) {
+    const auth = useAuth()
+    const navigate = useNavigate()
+    // const location = useLocation()
+    // const from = location.state?.from?.pathname || '/app'
     const [apiResponse, setApiResponse] = useState('')
-  // const [apiResponse, updateApiResponse] = useImmer({
-  //   apiResponse: ''
-  // })
-  // const [apiResponse, setApiResponse] = useState('')
-  // useEffect(() => {
-  //   fetch('http://localhost:8000/')
-  //     .then(res => res.text())
-  //     .then(res => setApiResponse(res))
-  // })
-    const handleClick = (e) => {
+    const handleClick = async (e) => {
         setApiResponse(true)
-        fetch('http://localhost:8000/api/mail', {
-            method: 'POST'
-        })
-        .then(res => res.text())
-        .then(res => setApiResponse(res))
+        simulateAuthentication
+            .then(value => {
+                setApiResponse(false)
+                auth.signInApp(() => (navigate('/appage')))
+                }
+            )
+            .catch(err => {
+                console.log('something went wrong!')
+            })
+        // fetch('/api/mail/login', {
+        //     method: 'POST',
+        // })
+        //     .then(res => console.log(res))
+        //     .then(res => setApiResponse(res))
     }
     return (
         <>
-            <Form action='/api/mail' method='POST' >
-                    <Button
-                        variant='dark'
-                        disabled={apiResponse}
-                        onClick={!apiResponse ? handleClick : null} >
-                        {apiResponse ? 'Authorizing...' :
-                            <p><Google />  <strong>Authorize with Google</strong></p>}
-                    </Button>
+            <Form>
+                <Button
+                    variant='dark'
+                    disabled={apiResponse}
+                    onClick={!apiResponse ? handleClick : null} >
+                    {apiResponse ?
+                        <p><Google /> Authorizing... </p> :
+                        <p><Google />  <strong>Authorize with Google</strong></p>}
+                </Button>
             </Form>
         </>
     )
