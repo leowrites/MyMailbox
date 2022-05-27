@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import AppPage from './app-page/AppPage';
 import Layout from './global/Layout'
+import Error from './global/Error'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RequireAuth, AuthProvider } from './context/auth'
 
@@ -23,6 +24,7 @@ root.render(
               </RequireAuth>
             }
           />
+          <Route path='*' element={<Error />} />
         </Route>
       </Routes>
     </AuthProvider>
