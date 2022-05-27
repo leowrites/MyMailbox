@@ -2,11 +2,9 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
-import { useImmer } from 'use-immer'
 import { Google } from 'react-bootstrap-icons'
 import { useAuth } from '../context/auth'
 import { useNavigate } from 'react-router-dom'
-
 
 // const { google } = require('googleapis')
 // const path = require('path')
@@ -73,10 +71,10 @@ export default function AuthForm() {
             <Button
                 variant='dark'
                 disabled={apiResponse}
-                onClick={!auth.isSignedIn ? handleClick : null} >
+                onClick={handleClick} >
                 {apiResponse ?
-                    <p><Google /> Authorizing... </p> :
-                    <p><Google />  <strong>Authorize with Google</strong></p>}
+                    <p className='mb-0'><Google /> Authorizing... </p> :
+                    <p className='mb-0'><Google />  <strong>Authorize with Google</strong></p>}
             </Button>
         </>
     )
