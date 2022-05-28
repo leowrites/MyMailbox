@@ -4,9 +4,11 @@ import ContentCard from './ContentCard'
 import ControllBar from './ControllBar'
 import { useAuth } from '../context/auth'
 import { useEffect, useState } from 'react'
+import { generateColors } from './color'
+
+const colors = generateColors(100)
 // implement infinite scroll
 // import InfiniteScroll from 'react-infinite-scroller'
-
 export default function AppPage() {
     const [data, setData] = useState(null)
     // save key id if checkbox is selected
@@ -16,11 +18,8 @@ export default function AppPage() {
 
     useEffect(() => {
         getData()
-    }, []
+        }, []
     )
-    useEffect(() => {
-        console.log(keyId)
-    }, [keyId])
 
     const getData = async () => {
         const res = await fetch('data.json', {
@@ -53,7 +52,6 @@ export default function AppPage() {
             setKeyId(data.map(d => d.id))
             setAllChekced(true)
         }
-        console.log(keyId)
     }
 
     const handleUnsubscribe = () => {
@@ -75,7 +73,8 @@ export default function AppPage() {
                         <ContentCard key={d.id}
                             data={d}
                             handleCheck={handleCheck}
-                            checked={keyId.includes(d.id) ? true : false} />
+                            checked={keyId.includes(d.id) ? true : false}
+                            profileColor={colors[d.id]}/>
                     )
                     )
                 }

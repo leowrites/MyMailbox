@@ -1,0 +1,10 @@
+.profile-image {
+    width: 5vh;
+    height: 6vh;
+    border-radius: 25%;
+    margin: auto
+}
+.profile-letter {
+    color: white;
+    font-weight: bold;
+}
