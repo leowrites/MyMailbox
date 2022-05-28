@@ -12,9 +12,9 @@ export default function ContentCard({ data, checked, profileColor, handleCheck }
         <Card>
             <Card.Header>
                 <Stack direction='horizontal'>
-                    <p className='mb-0'>Sender: {data.email}</p>
+                    <p className='mb-0'>Sender: {data.sender}</p>
                     <Form.Check className='ms-auto'
-                        aria-label={`Checkbox for email from ${data.email}`}
+                        aria-label={`Checkbox for email from ${data.sender}`}
                         checked={checked}
                         onChange={e => handleCheck(data.id)} />
                 </Stack>
@@ -25,11 +25,11 @@ export default function ContentCard({ data, checked, profileColor, handleCheck }
                         <Container
                             className='profile-image'
                             style={{'backgroundColor': `#${profileColor}`}}>
-                            <h3 className='profile-letter'>{data.email[0].toUpperCase()}</h3>
+                            <h3 className='profile-letter'>{data.sender[0].toUpperCase()}</h3>
                         </Container>
                     </Col>
                     <Col>
-                        {data.body}
+                        {`${data.snippet}...`}
                     </Col>
                 </Row>
             </Card.Body>
