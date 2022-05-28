@@ -5,6 +5,7 @@ import ControllBar from './ControllBar'
 import { useAuth } from '../context/auth'
 import { useEffect, useState } from 'react'
 import { generateColors } from './color'
+import { WhisperSpinner } from 'react-spinners-kit'
 
 const colors = generateColors(100)
 // implement infinite scroll
@@ -17,24 +18,12 @@ export default function AppPage() {
     const auth = useAuth()
 
     useEffect(() => {
-        getData()
-        }, []
-    )
+        console.log('fetching for messages')
+        fetch('api/mail/messages')
+            .then(res => res.json())
+            .then(data => setData(data))
+    }, [])
 
-    const getData = async () => {
-        const res = await fetch('data.json', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        })
-        const jsonData = await res.json()
-        const filteredData = []
-        for (let count = 0; count < 100; count++) {
-            filteredData.push(jsonData[count])
-        }
-        setData(filteredData)
-    }
 
     const handleCheck = (id) => {
         if (keyId.includes(id)) {
@@ -64,19 +53,23 @@ export default function AppPage() {
             <h3 className='mb-3'>
                 Welcome {auth.username}. Let's start unsubscribing
             </h3>
-            <Stack gap={3}>
+            <Stack gap={5}>
                 <ControllBar handleCheckAll={handleCheckAll}
                     handleUnsubscribe={handleUnsubscribe} />
                 {
-                    data && data.length > 0 &&
-                    data.map((d) => (
-                        <ContentCard key={d.id}
-                            data={d}
-                            handleCheck={handleCheck}
-                            checked={keyId.includes(d.id) ? true : false}
-                            profileColor={colors[d.id]}/>
-                    )
-                    )
+                    data?.length > 0 ?
+                        data.map((d, i) => (
+                            <ContentCard key={d.id}
+                                data={d}
+                                handleCheck={handleCheck}
+                                checked={keyId.includes(d.id) ? true : false}
+                                profileColor={colors[i]} />
+                        )
+                        ) :
+                        <Stack direction='horizontal' gap={3}>
+                            <h3>Please wait while we retrieve your data... </h3>
+                            <WhisperSpinner size={40} color="#686769" loading={true} />
+                        </Stack>
                 }
             </Stack>
         </Container>
