@@ -1,5 +1,6 @@
-import React from 'react'
-import { useNavigate, useLocation, Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useLocation, Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const AuthContext = React.createContext(null)
 
@@ -22,29 +23,21 @@ const AuthProvider = ({ children }) => {
 const useAuth = () => {
   return React.useContext(AuthContext)
 }
-
-const AuthStatus = () => {
-  const auth = useAuth()
-  const navigate = useNavigate()
-
-  if (!auth.isSignedIn) {
-    return <p>You are not logged in</p>
-  }
-
-  return (
-    <p>Welcome
-      <button
-        onClick={
-          auth.signOutApp(() => navigate('/'))
-        }>
-        Signout
-      </button>
-    </p>
-  )
-}
 const RequireAuth = ({ children }) => {
   const auth = useAuth()
+  const navigate = useNavigate()
   const location = useLocation()
+
+  // request user information and setting authcontext
+  useEffect(() => {
+    fetch("api/mail/auth")
+    .then(res => res.json())
+    .then(data => {
+      // redirect user to the login page
+      auth.signInApp(data.emailAddress, () => (navigate('/appage')))
+    })
+  },[])
+
   if (!auth.isSignedIn) {
     console.log('You are not signed in!')
     return <Navigate to='/' state={{ from: location }} replace />
@@ -52,4 +45,4 @@ const RequireAuth = ({ children }) => {
   return children
 }
 
-export {AuthProvider, AuthContext, useAuth, AuthStatus, RequireAuth}
+export {AuthProvider, AuthContext, useAuth, RequireAuth}

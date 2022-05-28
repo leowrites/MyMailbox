@@ -8,15 +8,6 @@ import Stack from 'react-bootstrap/Stack'
 // import { useNavigate, useLocation,} from 'react-router-dom'
 
 export default function App() {
-  // const navigate = useNavigate()
-  // const location = useLocation()
-  // const auth = useAuth()
-  // const from = location.state?.from?.pathname || ""
-  // console.log(from)
-  // const handleLoginSubmit = (e) => {
-  //   e.preventDefault()
-  //   auth.signInApp(navigate(from, { replace: true }))
-  // }
   return (
     <Container className='position-absolute top-50 start-50 translate-middle'>
       <Stack gap={3}>
