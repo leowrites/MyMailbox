@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import { useLocation, Navigate } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 
 const AuthContext = React.createContext(null)
 
@@ -27,14 +26,15 @@ const RequireAuth = ({ children }) => {
   const auth = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-
   // request user information and setting authcontext
   useEffect(() => {
     fetch("api/mail/auth")
     .then(res => res.json())
     .then(data => {
       // redirect user to the login page
-      auth.signInApp(data.emailAddress, () => (navigate('/appage')))
+      auth.signInApp(data.emailAddress, () => (
+        navigate('/appage')
+        ))
     })
   },[])
 
