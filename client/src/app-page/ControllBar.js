@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Stack'
 import Button from 'react-bootstrap/Button'
 import { EnvelopeCheck } from 'react-bootstrap-icons'
 
-export default function ControllBar({ handleCheckAll, handleUnsubscribe }) {
+export default function ControllBar({ buttonDisable, handleCheckAll, handleUnsubscribe }) {
     return (
         <Container>
             <Stack direction='horizontal' gap={3}>
@@ -15,8 +15,12 @@ export default function ControllBar({ handleCheckAll, handleUnsubscribe }) {
                     onChange={handleCheckAll} />
                 <Button variant='dark'
                     size='sm'
+                    disabled={buttonDisable}
                     onClick={handleUnsubscribe}>
-                    <strong>Unsubscribe </strong>
+                    {buttonDisable?
+                        <strong>Deleting...</strong>:
+                        <strong>Delete! </strong>
+                    }
                     <EnvelopeCheck />
                 </Button>
             </Stack>
