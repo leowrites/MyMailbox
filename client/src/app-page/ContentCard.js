@@ -9,7 +9,7 @@ import './ContentCard.css'
 
 export default function ContentCard({ data, checked, profileColor, handleCheck }) {
     return (
-        <Card>
+        <Card className='mb-3'>
             <Card.Header>
                 <Stack direction='horizontal'>
                     <p className='mb-0'>Sender: {data.sender}</p>

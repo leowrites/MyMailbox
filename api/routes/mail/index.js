@@ -34,38 +34,28 @@ router.get('/', async (req, res, next) => {
         const { tokens } = await oauth2Client.getToken(req.query.code)
         req.session.token = tokens
         oauth2Client.setCredentials(tokens)
-        // session isn't saving data upon refreshing
-        // req.session.userProfile = userData.data
-        // req.session.userMessages = messages.data
+        req.session.access_token = tokens
         res.redirect('http://localhost:3000/appage')
     }
 });
 
-router.get('/messages', async(req, res, next) => {
-    const response = await gmail.users.messages.list(
-        // req.session.pageToken ? 
-        // {...reqConfig, pageToken: req.session.pageToken} :
-        {
-            userId: 'me',
-            labelIds: 'CATEGORY_PROMOTIONS'
-        }
-    )
-    const findSender = (headers) => {
-        for (h of headers) {
-            if (h.name === 'From') {
-                return h.value
-            }
-        }
+router.post('/messages', async (req, res, next) => {
+    console.log(`Fetching from ${req.body.nextPageToken}`)
+    const reqConfig = {
+        userId: 'me',
+        maxResults: 5,
+        labelIds: 'CATEGORY_PROMOTIONS'
     }
-    // fetch all messages based on id returend
-    messagesId = response.data.messages.map(m => m.id)
-    // get the next page token and store it in session
-    // console.log(messagesId)
-    // req.session.pageToken = response.data.nextPageToken
+
+    const response = await gmail.users.messages.list(
+        req.body.nextPageToken ?
+            { ...reqConfig, pageToken: req.body.nextPageToken } :
+            reqConfig
+    )
     // push all fetch requests into promises
     const fetchManyMessageFromGmail = (messagesId) => {
         const promises = []
-        for (let id of messagesId){
+        for (let id of messagesId) {
             promises.push(gmail.users.messages.get({
                 userId: 'me',
                 id: id,
@@ -73,27 +63,55 @@ router.get('/messages', async(req, res, next) => {
         }
         return Promise.all(promises)
     }
+
+    // fetch all messages based on id returend
+    const findSender = (headers) => {
+        for (h of headers) {
+            if (h.name === 'From') {
+                return h.value
+            }
+        }
+    }
+
+    // process the returned messages from gmail
     const processResponse = (responses) => {
         const data = []
         responses.map(r => {
             const sender = findSender(r.data.payload.headers)
             data.push({
                 id: r.data.id,
-                sender: sender? sender : 'Could not find sender',
+                sender: sender ? sender : 'Could not find sender',
                 snippet: r.data.snippet
             })
         })
         return data
     }
-    fetchManyMessageFromGmail(messagesId)
-        .then(responses => processResponse(responses))
-        .then(data => res.json(data))
+    // after every fetch, we need to send the new nextPageToken back
+    if (response.data.messages){
+        messagesId = response.data.messages.map(m => m.id)
+        const nextPageToken = response.data.nextPageToken
+        fetchManyMessageFromGmail(messagesId)
+            .then(responses => processResponse(responses))
+            .then(data => {
+                const result = {
+                    data: [...data],
+                    nextPageToken: nextPageToken
+                }
+                res.json(result)
+            }
+        )
+    } else {
+        res.json({
+            data: null,
+            nextPageToken: null
+        })
+    }
 })
 
-router.post('/delete', async(req, res) => {
+router.post('/delete', async (req, res) => {
     // first need to check if logged in
     const deleteIds = req.body
-    try{
+    try {
         await gmail.users.messages.batchDelete({
             userId: 'me',
             requestBody: {
@@ -101,28 +119,28 @@ router.post('/delete', async(req, res) => {
             }
         })
         res.send('success')
-    } catch(err) {
+    } catch (err) {
         console.log(err)
     }
     // we can batch delete the requested emails
 })
 
-router.get('/auth', async(req, res, next) => {
+router.get('/auth', async (req, res, next) => {
     const userData = await gmail.users.getProfile({
         userId: 'me'
     })
     res.json(userData.data)
 })
 
-router.get('/test', async(req, res, next) => {
+router.get('/test', async (req, res, next) => {
     //route for testing
     // get one message and look at the label Id of that message
-    if (oauth2Client.getAccessToken() === null){
+    if (oauth2Client.getAccessToken() === null) {
         oauth2Client.setCredentials(req.session.access_token)
     }
     const testData = await gmail.users.messages.list({
-        userId:'me',
-    })    
+        userId: 'me',
+    })
     console.log(testData.data)
 })
 
@@ -131,7 +149,7 @@ router.post('/login', (req, res, next) => {
     res.redirect(url)
 })
 
-router.post('/logout', async(req, res, next) => {
+router.post('/logout', async (req, res, next) => {
     if (req.session.access_token.access_tokens) oauth2Client.revokeToken(access_tokens.access_token)
     res.redirect('http://localhost:3000/')
 })
