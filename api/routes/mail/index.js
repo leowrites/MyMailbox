@@ -27,9 +27,7 @@ const gmail = google.gmail({
     auth: oauth2Client
 })
 
-let access_tokens
-
-router.get('/', async (req, res, next) => {
+router.get('/redirect', async (req, res) => {
     if (req.query.code) {
         const { tokens } = await oauth2Client.getToken(req.query.code)
         req.session.token = tokens
@@ -37,21 +35,39 @@ router.get('/', async (req, res, next) => {
         req.session.access_token = tokens
         res.redirect('http://localhost:3000/appage')
     }
-});
+})
+
+router.get('/labels', async (req, res) => {
+    const result = await gmail.users.labels.list({
+        userId: 'me'
+    })
+    // do some processing and send back all labels for now
+
+    const ids = result.data.labels.map(d => (
+        {
+            id: d.id,
+            name: d.name
+        }))
+    res.json(ids)
+})
 
 router.post('/messages', async (req, res, next) => {
     console.log(`Fetching from ${req.body.nextPageToken}`)
-    const reqConfig = {
+    let reqConfig = {
         userId: 'me',
         maxResults: 5,
         labelIds: 'CATEGORY_PROMOTIONS'
     }
 
-    const response = await gmail.users.messages.list(
-        req.body.nextPageToken ?
-            { ...reqConfig, pageToken: req.body.nextPageToken } :
-            reqConfig
-    )
+    reqConfig = req.body.nextPageToken ?
+        { ...reqConfig, pageToken: req.body.nextPageToken } :
+        reqConfig
+
+    reqConfig = req.body.label ?
+        { ...reqConfig, labelIds: req.body.label } :
+        reqConfig
+
+    const response = await gmail.users.messages.list(reqConfig)
     // push all fetch requests into promises
     const fetchManyMessageFromGmail = (messagesId) => {
         const promises = []
@@ -87,7 +103,7 @@ router.post('/messages', async (req, res, next) => {
         return data
     }
     // after every fetch, we need to send the new nextPageToken back
-    if (response.data.messages){
+    if (response.data.messages) {
         messagesId = response.data.messages.map(m => m.id)
         const nextPageToken = response.data.nextPageToken
         fetchManyMessageFromGmail(messagesId)
@@ -99,7 +115,7 @@ router.post('/messages', async (req, res, next) => {
                 }
                 res.json(result)
             }
-        )
+            )
     } else {
         res.json({
             data: null,
@@ -150,7 +166,7 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/logout', async (req, res, next) => {
-    if (req.session.access_token.access_tokens) oauth2Client.revokeToken(access_tokens.access_token)
+    if (req.session.access_token.access_tokens) oauth2Client.revokeToken(req.session.access_token.access_tokens)
     res.redirect('http://localhost:3000/')
 })
 

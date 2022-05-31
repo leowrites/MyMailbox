@@ -3,7 +3,7 @@ import Stack from 'react-bootstrap/Stack'
 import ContentCard from './ContentCard'
 import ControllBar from './ControllBar'
 import { useAuth } from '../context/auth'
-import { useEffect, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { WhisperSpinner } from 'react-spinners-kit'
 import FlashMessage from '../global/FlashMessage'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -25,17 +25,46 @@ export default function AppPage() {
         message: '',
         show: false
     })
+    const [labels, setLabels] = useState(null)
+    const [selectedLabel, setSelectedLabel] = useState('CATEGORY_PROMOTIONS')
     const auth = useAuth()
+    const isLabelNull = labels === null ? true : false
+
+    // if labels is null, get labels
+    useEffect(
+        () => {
+            fetchLabel()
+        }, [isLabelNull]
+    )
+
+    // if label changes or data.length is 0, get data
+    useEffect(
+        () => {
+            console.log('fetching new data')
+            fetchData()
+        }, [selectedLabel]
+    )
+    const fetchLabel = () => {
+        fetch('api/mail/labels')
+            .then(res => res.json())
+            .then(data => { setLabels(data) })
+    }
+
     const fetchData = () => {
+        console.log(selectedLabel)
         fetch('api/mail/messages',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nextPageToken: nextPageToken })
+                body: JSON.stringify({
+                    nextPageToken: nextPageToken,
+                    label: selectedLabel
+                })
             })
             .then(res => res.json())
             .then(result => {
                 setNextPageToken(result.nextPageToken)
+                console.log(result.data)
                 if (result.data) {
                     setData([...data, ...result.data])
                 } else {
@@ -84,11 +113,10 @@ export default function AppPage() {
                         message: `You deleted ${keyId.length} messages`,
                         show: true,
                     })
-                    return newData
                 }
             })
             // show the flash message and set a timer of 3 seconds
-            .then(newData => {
+            .then(() => {
                 setTimeout(() => {
                     setShowMessage({
                         ...showMessage,
@@ -108,9 +136,12 @@ export default function AppPage() {
             show: false,
         })
     }
-    if (data && data.length === 0){
-        fetchData()
+
+    const handleOptionChange = (value) => {
+        setSelectedLabel(value)
+        setData([])
     }
+
     return (
         <Container>
             <FlashMessage
@@ -124,21 +155,24 @@ export default function AppPage() {
                     Welcome {auth.username}. Let's start unsubscribing
                 </h4>
                 <ControllBar handleCheckAll={handleCheckAll}
+                    allChecked={allChecked}
                     handleUnsubscribe={handleUnsubscribe}
+                    handleOptionChange={handleOptionChange}
                     buttonDisable={buttonDisable}
+                    labels={labels}
                 />
                 {
                     data !== null ?
                         <InfiniteScroll
-                            className='scroll-bar'
+                            className='infinite-scroll'
                             dataLength={data.length}
                             next={fetchData}
-                            hasMore={true}
+                            hasMore={nextPageToken ? true : false}
                             scrollThreshold={1}
                             loader={
-                                <Stack direction='horizontal' gap={3}>
+                                <Stack direction='horizontal'>
                                     <div className='ms-auto me-auto'>
-                                        <WhisperSpinner size={100} color="#686769" loading={true} />
+                                        <WhisperSpinner size={75} color="#686769" loading={true} />
                                     </div>
                                 </Stack>
                             }

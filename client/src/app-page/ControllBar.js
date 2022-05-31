@@ -1,29 +1,52 @@
 import Form from 'react-bootstrap/Form'
-import Stack from 'react-bootstrap/Stack'
 import Container from 'react-bootstrap/Stack'
 import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 import { EnvelopeCheck } from 'react-bootstrap-icons'
 
-export default function ControllBar({ buttonDisable, handleCheckAll, handleUnsubscribe }) {
+export default function ControllBar({ buttonDisable, labels, handleOptionChange, allChecked, handleCheckAll, handleUnsubscribe }) {
     return (
         <Container>
-            <Stack direction='horizontal' gap={3}>
-                <Form.Check className='ms-auto'
-                    type={'checkbox'}
-                    id='select-all'
-                    label={<strong>select all</strong>}
-                    onChange={handleCheckAll} />
-                <Button variant='dark'
-                    size='sm'
-                    disabled={buttonDisable}
-                    onClick={handleUnsubscribe}>
-                    {buttonDisable?
-                        <strong>Deleting...</strong>:
-                        <strong>Delete! </strong>
-                    }
-                    <EnvelopeCheck />
-                </Button>
-            </Stack>
+            <Row>
+                <Col className='m-auto'>
+                    <Form.Select
+                        defaultValue='CATEGORY_PROMOTIONS'
+                        onChange={e => handleOptionChange(e.target.value)}
+                    >
+                        {
+                            labels && labels.map(item => (
+                                <option
+                                    key={item.id}
+                                    value={item.id}
+                                >
+                                    {item.name}
+                                </option>
+                            ))
+                        }
+                    </Form.Select>
+                </Col>
+                <Col className='m-auto'>
+                    <Form.Check
+                        type={'checkbox'}
+                        id='select-all'
+                        value={allChecked}
+                        label={<strong>select all</strong>}
+                        onChange={handleCheckAll} />
+                </Col>
+                <Col className='m-auto'>
+                    <Button variant='dark'
+                        size='sm'
+                        disabled={buttonDisable}
+                        onClick={handleUnsubscribe}>
+                        {buttonDisable ?
+                            <strong>Deleting...</strong> :
+                            <strong>Delete! </strong>
+                        }
+                        <EnvelopeCheck />
+                    </Button>
+                </Col>
+            </Row>
         </Container>
     )
 }
