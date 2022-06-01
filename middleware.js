@@ -74,5 +74,5 @@ module.exports.revokeToken = async (req, res) => {
         // await oauth.revokeToken(req.session.access_tokens.access_token)
         req.session.access_tokens = null
     }
-    res.redirect('http://localhost:3000')
+    res.redirect(HOME_URL)
 } 
