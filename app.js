@@ -45,13 +45,14 @@ const sessionConfig = {
 }
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    useDefaults: false,
-    directives: {
-      defaultSrc: ["'self'", "https://mail.google.com/"]
-    }
-  }
+  contentSecurityPolicy: false
 }))
+// app.use(helmet.contentSecurityPolicy({
+//   directives: {
+//     "form-action": ["'self'", "https://mail.google.com/"]
+//   }
+// }
+// ))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
