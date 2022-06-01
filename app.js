@@ -18,28 +18,28 @@ const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/mailbox'
 const PORT = process.env.PORT || 8000
 
 console.log(dbUrl)
-mongoose.connect(dbUrl, {
-  useNewUrlParser:true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('connected'))
-  .catch(err => console.log(err))
+// mongoose.connect(dbUrl, {
+//   useNewUrlParser:true,
+//   useUnifiedTopology: true
+// })
+//   .then(() => console.log('connected'))
+//   .catch(err => console.log(err))
 
 const sessionConfig = {
   name: 'session',
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({
-    mongoUrl: dbUrl,
-    secret: process.env.MONGO_SECRET,
-    touchAfter: 24 * 60 * 7,
-    crypto: {
-      secret: 'squirrel'
-    }
-  }),
+  // store: MongoStore.create({
+  //   mongoUrl: dbUrl,
+  //   secret: process.env.MONGO_SECRET,
+  //   touchAfter: 24 * 60 * 7,
+  //   crypto: {
+  //     secret: 'squirrel'
+  //   }
+  // }),
   cookie: {
-    secure: true,
+    // secure: true,
     httpOnly: true,
   }
 }
