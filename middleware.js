@@ -2,8 +2,11 @@ const { google } = require('googleapis')
 const path = require('path')
 const HOME_URL = process.env.NODE_ENV === 'production'
     ? 'https://awesome-mail-box.herokuapp.com/'
-    : 'http://localhost:3000'
+    : 'http://localhost:3000/'
 
+const REDIRECT_URL = process.env.NODE_ENV === 'production'
+    ? 'https://awesome-mail-box.herokuapp.com/'
+    : 'http://localhost:8000/'
 require('dotenv').config({
     path: path.join(path.resolve(), '.env')
 })
@@ -11,7 +14,7 @@ require('dotenv').config({
 const oauth = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    HOME_URL + 'api/mail/login'
+    `${REDIRECT_URL}api/mail/login`
 )
 
 const gmail = google.gmail({
@@ -34,7 +37,7 @@ module.exports.isLoggedIn = (req, res, next) => {
 module.exports.isAuthorized = (req, res, next) => {
     req.session.returnTo = req.originalUrl
     if (req.session.access_tokens) {
-        if (req.session.access_tokens.expiry_date < Date.now()){
+        if (req.session.access_tokens.expiry_date < Date.now()) {
             // access token has expired, get a new one
             req.session.access_tokens = null
             res.redirect(HOME_URL)

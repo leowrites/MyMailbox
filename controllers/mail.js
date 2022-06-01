@@ -1,6 +1,6 @@
 const HOME_URL = process.env.NODE_ENV === 'production'
     ? 'https://awesome-mail-box.herokuapp.com/'
-    : 'http://localhost:3000'
+    : 'http://localhost:3000/'
 
 module.exports.redirect = async (req, res) => {
     // redirects them to where they were or log them into the app
@@ -84,6 +84,7 @@ module.exports.getMessages = async (req, res, next) => {
                     data: [...data],
                     nextPageToken: nextPageToken
                 }
+                console.log(result)
                 res.json(result)
             }
             )
