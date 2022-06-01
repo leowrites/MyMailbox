@@ -5,7 +5,7 @@ const HOME_URL = process.env.NODE_ENV === 'production'
 module.exports.redirect = async (req, res) => {
     // redirects them to where they were or log them into the app
     console.log(req.session.returnTo)
-    res.redirect(`${HOME_URL}/appage`)
+    res.redirect(`${HOME_URL}appage`)
 }
 
 module.exports.getLabels = async (req, res) => {
