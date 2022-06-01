@@ -13,9 +13,13 @@ const cors = require('cors')
 const ExpressError = require('./utils/error')
 const MongoStore = require('connect-mongo')
 const helmet = require('helmet');
+const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/mailbox'
 const PORT = process.env.PORT || 8000
 
-// TODO: security TSL
+mongoose.connect(dbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
 
 const sessionConfig = {
   name: 'session',
@@ -23,7 +27,7 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
-    mongoUrl: 'mongodb://localhost/mailbox',
+    mongoUrl: dbUrl,
     secret: process.env.MONGO_SECRET,
     touchAfter: 24 * 60 * 7,
     crypto: {
