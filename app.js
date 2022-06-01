@@ -37,10 +37,6 @@ const sessionConfig = {
   store: MongoStore.create({
     mongoUrl: dbUrl,
     secret: process.env.MONGO_SECRET,
-    touchAfter: 24 * 60 * 7,
-    crypto: {
-      secret: 'squirrel'
-    }
   }),
   cookie: {
     secure: true,
