@@ -29,7 +29,8 @@ export default function AppPage() {
     const [selectedLabel, setSelectedLabel] = useState('CATEGORY_PROMOTIONS')
     const auth = useAuth()
     const isLabelNull = labels === null ? true : false
-
+    const isDataEmpty = data?.length === 0 ? true : false
+    const isMounted = useRef(false)
     // if labels is null, get labels
     useEffect(
         () => {
@@ -37,13 +38,25 @@ export default function AppPage() {
         }, [isLabelNull]
     )
 
-    // if label changes or data.length is 0, get data
+    // this is only triggered once
     useEffect(
         () => {
             console.log('fetching new data')
             fetchData()
-        }, [selectedLabel]
+        }, []
     )
+
+    useEffect(
+        () => {
+            if (isDataEmpty && isMounted.current) {
+                console.log('fetching new data')
+                fetchData()
+            } else {
+                isMounted.current = true
+            }
+        }, [isDataEmpty]
+    )
+
     const fetchLabel = () => {
         fetch('api/mail/labels')
             .then(res => res.json())

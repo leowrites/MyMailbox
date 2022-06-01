@@ -1,44 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const path = require('path');
-const { google } = require('googleapis')
-require('dotenv').config({
-    path: path.join(path.resolve(), '.env')
-})
+module.exports.redirect = async (req, res) => {
+    // redirects them to where they were or log them into the app
+    console.log(req.session.returnTo)
+    res.redirect('http://localhost:3000/appage')
+}
 
-// TODO
-// Need to wrap everything around try catch to validate login
-// move everything to middleware and check authorization
-// if there is no access_token then prompt for authorization
-
-const oauth2Client = new google.auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
-)
-
-const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: process.env.SCOPE
-})
-
-const gmail = google.gmail({
-    version: 'v1',
-    auth: oauth2Client
-})
-
-router.get('/redirect', async (req, res) => {
-    if (req.query.code) {
-        const { tokens } = await oauth2Client.getToken(req.query.code)
-        req.session.token = tokens
-        oauth2Client.setCredentials(tokens)
-        req.session.access_token = tokens
-        res.redirect('http://localhost:3000/appage')
-    }
-})
-
-router.get('/labels', async (req, res) => {
-    const result = await gmail.users.labels.list({
+module.exports.getLabels = async (req, res) => {
+    const result = await req.app.locals.gmail.users.labels.list({
         userId: 'me'
     })
     // do some processing and send back all labels for now
@@ -49,9 +16,9 @@ router.get('/labels', async (req, res) => {
             name: d.name
         }))
     res.json(ids)
-})
+}
 
-router.post('/messages', async (req, res, next) => {
+module.exports.getMessages = async (req, res, next) => {
     console.log(`Fetching from ${req.body.nextPageToken}`)
     let reqConfig = {
         userId: 'me',
@@ -67,12 +34,12 @@ router.post('/messages', async (req, res, next) => {
         { ...reqConfig, labelIds: req.body.label } :
         reqConfig
 
-    const response = await gmail.users.messages.list(reqConfig)
+    const response = await req.app.locals.gmail.users.messages.list(reqConfig)
     // push all fetch requests into promises
     const fetchManyMessageFromGmail = (messagesId) => {
         const promises = []
         for (let id of messagesId) {
-            promises.push(gmail.users.messages.get({
+            promises.push(req.app.locals.gmail.users.messages.get({
                 userId: 'me',
                 id: id,
             }))
@@ -122,52 +89,50 @@ router.post('/messages', async (req, res, next) => {
             nextPageToken: null
         })
     }
-})
+}
 
-router.post('/delete', async (req, res) => {
+module.exports.deleteMessagse = async (req, res) => {
     // first need to check if logged in
     const deleteIds = req.body
-    try {
-        await gmail.users.messages.batchDelete({
-            userId: 'me',
-            requestBody: {
-                ids: deleteIds
-            }
-        })
-        res.send('success')
-    } catch (err) {
-        console.log(err)
-    }
-    // we can batch delete the requested emails
-})
+    await req.app.locals.gmail.users.messages.batchDelete({
+        userId: 'me',
+        requestBody: {
+            ids: deleteIds
+        }
+    })
+    res.send('success')
+}
 
-router.get('/auth', async (req, res, next) => {
-    const userData = await gmail.users.getProfile({
+module.exports.auth = async (req, res, next) => {
+    const userData = await req.app.locals.gmail.users.getProfile({
         userId: 'me'
     })
     res.json(userData.data)
-})
+}
 
-router.get('/test', async (req, res, next) => {
+module.exports.test = async (req, res, next) => {
     //route for testing
     // get one message and look at the label Id of that message
     if (oauth2Client.getAccessToken() === null) {
         oauth2Client.setCredentials(req.session.access_token)
     }
-    const testData = await gmail.users.messages.list({
+    const testData = await req.app.locals.gmail.users.messages.list({
         userId: 'me',
     })
     console.log(testData.data)
-})
+}
 
-// Redirect user to google authentication
-router.post('/login', (req, res, next) => {
-    res.redirect(url)
-})
+module.exports.loginPost = (req, res, next) => {
+    // won't need to do much, just call the middleware
+    console.log('Redirecting to login page...')
+}
 
-router.post('/logout', async (req, res, next) => {
-    if (req.session.access_token.access_tokens) oauth2Client.revokeToken(req.session.access_token.access_tokens)
-    res.redirect('http://localhost:3000/')
-})
+module.exports.loginGet = (req, res, next) => {
+    // redirect to redirect for verification
+    res.redirect('redirect')
+}
 
-module.exports = router;
+module.exports.logout = (req, res, next) => {
+    // won't need to do much, all handled by middleware
+    console.log('Good bye!')
+}

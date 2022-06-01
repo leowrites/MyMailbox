@@ -3,11 +3,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const app = express();
 const ejsMate = require('ejs-mate')
-const indexRouter = require('./routes/mail/index')
-const ExpressError = require('./error')
+const indexRouter = require('./routes/index')
 const path = require('path');
 const session = require('cookie-session')
 const cors = require('cors')
+const ExpressError = require('./utils/error')
 
 
 const sessionConfig = {
@@ -36,6 +36,8 @@ app.set('views', path.resolve() + '/views')
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+
+app.locals.gmail = ''
 
 app.use('/api/mail', indexRouter)
 
