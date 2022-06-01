@@ -54,7 +54,7 @@ app.use(helmet({
 }))
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    "form-action": ["'self'", "https://mail.google.com/"]
+    "form-action": ["'self'", "*.google.com"]
   }
 }
 ))
