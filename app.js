@@ -13,6 +13,7 @@ const cors = require('cors')
 const ExpressError = require('./utils/error')
 const MongoStore = require('connect-mongo')
 const helmet = require('helmet');
+const mongoose = require('mongoose')
 const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/mailbox'
 const PORT = process.env.PORT || 8000
 
