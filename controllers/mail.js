@@ -4,7 +4,7 @@ const HOME_URL = process.env.NODE_ENV === 'production'
 
 module.exports.redirect = async (req, res) => {
     // redirects them to where they were or log them into the app
-    console.log(req.session.returnTo)
+    // console.log(req.session.returnTo)
     res.redirect(`${HOME_URL}appage`)
 }
 
@@ -23,7 +23,7 @@ module.exports.getLabels = async (req, res) => {
 }
 
 module.exports.getMessages = async (req, res, next) => {
-    console.log(`Fetching from ${req.body.nextPageToken}`)
+    // console.log(`Fetching from ${req.body.nextPageToken}`)
     let reqConfig = {
         userId: 'me',
         maxResults: 5,
@@ -84,7 +84,7 @@ module.exports.getMessages = async (req, res, next) => {
                     data: [...data],
                     nextPageToken: nextPageToken
                 }
-                console.log(result)
+                // console.log(result)
                 res.json(result)
             }
             )
@@ -124,7 +124,7 @@ module.exports.test = async (req, res, next) => {
     const testData = await req.app.locals.gmail.users.messages.list({
         userId: 'me',
     })
-    console.log(testData.data)
+    // console.log(testData.data)
 }
 
 module.exports.loginPost = (req, res, next) => {

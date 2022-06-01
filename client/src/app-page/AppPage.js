@@ -64,7 +64,7 @@ export default function AppPage() {
     }
 
     const fetchData = () => {
-        console.log(selectedLabel)
+        // console.log(selectedLabel)
         fetch('api/mail/messages',
             {
                 method: 'POST',
@@ -77,7 +77,7 @@ export default function AppPage() {
             .then(res => res.json())
             .then(result => {
                 setNextPageToken(result.nextPageToken)
-                console.log(result.data)
+                // console.log(result.data)
                 if (result.data) {
                     setData([...data, ...result.data])
                 } else {

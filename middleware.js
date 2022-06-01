@@ -24,7 +24,7 @@ const gmail = google.gmail({
 
 module.exports.isLoggedIn = (req, res, next) => {
     req.app.locals.gmail = gmail
-    console.log(req.session.access_tokens)
+    // console.log(req.session.access_tokens)
     if (req.session.access_tokens) {
         console.log('Logged IN')
         oauth.setCredentials(req.session.access_tokens)

@@ -13,7 +13,7 @@ const cors = require('cors')
 const ExpressError = require('./utils/error')
 const MongoStore = require('connect-mongo')
 const helmet = require('helmet');
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/mailbox'
 const PORT = process.env.PORT || 8000
 
@@ -21,27 +21,27 @@ const PORT = process.env.PORT || 8000
 // TODO
 // Fix mongo connection
 
-console.log(dbUrl)
-mongoose.connect(dbUrl, {
-  useNewUrlParser:true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('connected'))
-  .catch(err => console.log(err))
+// console.log(dbUrl)
+// mongoose.connect(dbUrl, {
+//   useNewUrlParser:true,
+//   useUnifiedTopology: true
+// })
+//   .then(() => console.log('connected'))
+//   .catch(err => console.log(err))
 
 const sessionConfig = {
   name: 'session',
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  // store: MongoStore.create({
-  //   mongoUrl: dbUrl,
-  //   secret: process.env.MONGO_SECRET,
-  //   touchAfter: 24 * 60 * 7,
-  //   crypto: {
-  //     secret: 'squirrel'
-  //   }
-  // }),
+  store: MongoStore.create({
+    mongoUrl: dbUrl,
+    secret: process.env.MONGO_SECRET,
+    touchAfter: 24 * 60 * 7,
+    crypto: {
+      secret: 'squirrel'
+    }
+  }),
   cookie: {
     secure: true,
     httpOnly: true,
