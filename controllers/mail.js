@@ -1,7 +1,11 @@
+const HOME_URL = process.env.NODE_ENV === 'production'
+    ? 'https://awesome-mail-box.herokuapp.com/'
+    : 'http://localhost:3000'
+
 module.exports.redirect = async (req, res) => {
     // redirects them to where they were or log them into the app
     console.log(req.session.returnTo)
-    res.redirect('http://localhost:3000/appage')
+    res.redirect(`${HOME_URL}/appage`)
 }
 
 module.exports.getLabels = async (req, res) => {

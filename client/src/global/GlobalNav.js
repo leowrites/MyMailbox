@@ -10,7 +10,7 @@ export default function GlobalNav() {
     return (
         <Navbar>
             <Container>
-                <Navbar.Brand href="/">Unsubscribe.</Navbar.Brand>
+                <Navbar.Brand href="/">Delete.</Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
