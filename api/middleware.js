@@ -17,8 +17,9 @@ const gmail = google.gmail({
 
 module.exports.isLoggedIn = (req, res, next) => {
     req.app.locals.gmail = gmail
-    console.log('Logged IN')
     if (req.session.access_tokens) {
+        console.log('Logged IN')
+        oauth.setCredentials(req.session.access_tokens)
         next()
     } else {
         res.redirect('http://localhost:3000')
