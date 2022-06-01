@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== "production"){
+  require('dotenv').config()
+}
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -11,9 +14,6 @@ const ExpressError = require('./utils/error')
 const MongoStore = require('connect-mongo')
 const helmet = require('helmet');
 const PORT = process.env.PORT || 8000
-require('dotenv').config({
-  path: path.join(path.resolve(), '.env')
-})
 
 // TODO: security TSL
 
