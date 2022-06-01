@@ -21,18 +21,24 @@ const PORT = process.env.PORT || 8000
 // TODO
 // Fix mongo connection
 mongoose.connect(dbUrl, {
-  useNewUrlParser:true,
+  useNewUrlParser: true,
   useUnifiedTopology: true
 })
   .then(() => console.log('connected'))
   .catch(err => console.log(err))
-  
+
+const options = {
+  mongoUrl: dbUrl,
+  secret: process.env.SESSION_SECRET,
+  touchAfter: 24 * 60 * 6
+}
+
 const sessionConfig = {
   name: 'session',
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({mongoUrl: dbUrl}),
+  store: MongoStore.create(options),
   cookie: {
     secure: true,
     httpOnly: true,
