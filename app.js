@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV !== "production"){
+if (process.env.NODE_ENV !== "production") {
   require('dotenv').config()
 }
 const express = require('express');
@@ -17,10 +17,13 @@ const mongoose = require('mongoose')
 const dbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/mailbox'
 const PORT = process.env.PORT || 8000
 
+console.log(dbUrl)
 mongoose.connect(dbUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useNewUrlParser:true,
+  useUnifiedTopology: true
 })
+  .then(() => console.log('connected'))
+  .catch(err => console.log(err))
 
 const sessionConfig = {
   name: 'session',
