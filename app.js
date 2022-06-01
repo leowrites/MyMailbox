@@ -20,15 +20,14 @@ const PORT = process.env.PORT || 8000
 
 // TODO
 // Fix mongo connection
-// use helmet
 
 console.log(dbUrl)
-// mongoose.connect(dbUrl, {
-//   useNewUrlParser:true,
-//   useUnifiedTopology: true
-// })
-//   .then(() => console.log('connected'))
-//   .catch(err => console.log(err))
+mongoose.connect(dbUrl, {
+  useNewUrlParser:true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('connected'))
+  .catch(err => console.log(err))
 
 const sessionConfig = {
   name: 'session',
@@ -44,7 +43,7 @@ const sessionConfig = {
   //   }
   // }),
   cookie: {
-    // secure: true,
+    secure: true,
     httpOnly: true,
   }
 }
