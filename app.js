@@ -9,8 +9,6 @@ const session = require('cookie-session')
 const cors = require('cors')
 const ExpressError = require('./utils/error')
 const MongoStore = require('connect-mongo')
-const https = require('https')
-const fs = require('fs')
 const helmet = require('helmet');
 const PORT = process.env.PORT || 8000
 require('dotenv').config({
