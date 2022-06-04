@@ -7,9 +7,9 @@ export default function TitleText() {
             <TypeAnimation
                 cursor={true}
                 sequence={[
-                    'Deleting is only a click a way',
+                    'A mailbox like you have never seen before.',
                     2000,
-                    'Deleting has never been so easy.',
+                    'Make managing your emails fun.',
                     2000
                 ]}
                 wrapper="h2"

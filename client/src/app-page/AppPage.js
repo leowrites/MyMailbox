@@ -165,7 +165,7 @@ export default function AppPage() {
             />
             <Stack gap={3}>
                 <h4 className='mt-3'>
-                    Welcome {auth.username}. Let's start deleting.
+                    Welcome {auth.username}.
                 </h4>
                 <ControllBar handleCheckAll={handleCheckAll}
                     allChecked={allChecked}
