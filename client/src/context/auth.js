@@ -36,6 +36,7 @@ const RequireAuth = ({ children }) => {
         navigate('/appage')
         ))
     })
+    // eslint-disable-next-line
   },[])
 
   if (!auth.isSignedIn) {

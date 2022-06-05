@@ -44,6 +44,7 @@ export default function AppPage() {
         () => {
             console.log('fetching new data')
             fetchData()
+            // eslint-disable-next-line
         }, []
     )
 
@@ -55,6 +56,7 @@ export default function AppPage() {
             } else {
                 isMounted.current = true
             }
+            // eslint-disable-next-line
         }, [isDataEmpty]
     )
 
@@ -184,8 +186,8 @@ export default function AppPage() {
                 setShowMessage({
                     ...showMessage,
                     show: false
-                }, 3000)
-            })
+                })
+            }, 3000)
         })
         .catch(err => console.err(err)) 
     }

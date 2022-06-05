@@ -1,4 +1,4 @@
-export default {
+const color = {
     A: '2D2D34',
     B: 'B97375',
     C: 'D64550',
@@ -25,3 +25,5 @@ export default {
     Y: 'ACD8AA',
     Z: '798478'
 }
+
+export default color
