@@ -24,4 +24,6 @@ router.get('/login', setNewToken, mailController.loginGet)
 
 router.post('/logout', revokeToken, mailController.logout)
 
+router.post('/send', isLoggedIn, catchAsync(mailController.send))
+
 module.exports = router;

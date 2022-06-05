@@ -1,3 +1,5 @@
+const base64Url = require('base64url')
+
 const HOME_URL = process.env.NODE_ENV === 'production'
     ? 'https://awesome-mail-box.herokuapp.com/'
     : 'http://localhost:3000/'
@@ -140,4 +142,23 @@ module.exports.loginGet = (req, res, next) => {
 module.exports.logout = (req, res, next) => {
     // won't need to do much, all handled by middleware
     console.log('Good bye!')
+}
+
+module.exports.send = async (req, res, next) => {
+    console.log(req.body)
+    const email = `From: <${req.body.from}>
+To: <${req.body.to}>
+Subject: ${req.body.title}
+
+${req.body.body}
+    `
+    const base64Email = await base64Url.encode(email)
+    const result = await req.app.locals.gmail.users.messages.send({
+        userId: 'me',
+        requestBody: {
+            raw: base64Email
+        }
+    })
+    console.log(result.data)
+    res.json(result.data)
 }
