@@ -31,6 +31,7 @@ export default function AppPage() {
     const isLabelNull = labels === null ? true : false
     const isDataEmpty = data?.length === 0 ? true : false
     const isMounted = useRef(false)
+    const [showEmailForm, setShowEmailForm] = useState(false)
     // if labels is null, get labels
     useEffect(
         () => {
@@ -155,6 +156,40 @@ export default function AppPage() {
         setData([])
     }
 
+    const handleSubmitEmail = (values) => {
+        // console.log(values)
+        fetch('/api/mail/send', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                from: auth.username,
+                ...values
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                setShowEmailForm(false)
+                setShowMessage({
+                    header: 'Success!',
+                    message: 'Successfully sent email!',
+                    show: true
+                })
+            }
+            }
+        )
+        .then(() => {
+            setTimeout(() => {
+                setShowMessage({
+                    ...showMessage,
+                    show: false
+                }, 3000)
+            })
+        })
+        .catch(err => console.err(err)) 
+    }
+
     return (
         <Container>
             <FlashMessage
@@ -164,15 +199,15 @@ export default function AppPage() {
                 handleMessageClick={handleMessageClick}
             />
             <Stack gap={3}>
-                <h4 className='mt-3'>
-                    Welcome {auth.username}.
-                </h4>
                 <ControllBar handleCheckAll={handleCheckAll}
                     allChecked={allChecked}
                     handleUnsubscribe={handleUnsubscribe}
                     handleOptionChange={handleOptionChange}
                     buttonDisable={buttonDisable}
                     labels={labels}
+                    handleSubmitEmail={handleSubmitEmail}
+                    showEmailForm={showEmailForm}
+                    setShowEmailForm={setShowEmailForm}
                 />
                 {
                     data !== null ?
