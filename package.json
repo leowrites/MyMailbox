@@ -10,6 +10,7 @@
     "node": "v16.13.1"
   },
   "dependencies": {
+    "base64url": "^3.0.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "~1.4.4",
     "cookie-session": "^2.0.0",
