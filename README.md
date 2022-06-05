@@ -1,8 +1,6 @@
 # Mail-Box project
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
+Link to project [MyMailbox](https://awesome-mail-box.herokuapp.com/)
+## Description
+This is a project aim to change the way people use their mailboxes. In the later phases the mail interface will be done in a interactive game engine, making managing mails more fun than ever.
+## Status
+In development
